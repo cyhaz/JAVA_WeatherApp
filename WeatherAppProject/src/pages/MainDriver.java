@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -33,6 +32,7 @@ public class MainDriver extends JFrame {
 	String[] topIconPath = { topIconDir + "instagram.png", topIconDir + "list.png", topIconDir + "home.png",
 			topIconDir + "user.png", topIconDir + "chat.png" };
 
+	
 	public MainDriver() {
 		super("오늘의 날씨 - 홈");
 
@@ -41,24 +41,23 @@ public class MainDriver extends JFrame {
 		p_container = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
 
 		// pages (홈, 로그인, 사진관리, ...)
-		pages[0] = new Page_Gallery(this, "날씨 갤러리", bgDir + "bg3.jpg", false);
-		pages[1] = new Page_List(this, "To do list", bgDir + "bg2.jpg", false);
-		pages[2] = new Page_Home(this, "홈", bgDir + "bg1.jpg", true);					
-		pages[3] = new Page_User(this, "마이 페이지", bgDir + "bg4.jpg", false);
-		pages[4] = new Page_Chat(this, "1:1 채팅", bgDir + "bg5.jpg", false);
+		pages[0] = new Page_Gallery(this, "날씨 갤러리", bgDir + "bg3.jpg", true);
+//		pages[1] = new Page_List(this, "To do list", bgDir + "bg2.jpg", false);
+//		pages[2] = new Page_Home(this, "홈", bgDir + "bg1.jpg", true); // home 으로 추후 변경
+//		pages[3] = new Page_User(this, "마이 페이지", bgDir + "bg4.jpg", false);
+//		pages[4] = new Page_Chat(this, "1:1 채팅", bgDir + "bg5.jpg", false);
 
 		// style
 		p_menu.setBackground(new Color(52, 85, 115));
 		p_container.setPreferredSize(new Dimension(screen_width - 15, screen_height - 20));
-
-		createTopIcon(); // 상단 메뉴 아이콘 생성 (클릭 이벤트 구현 필요!!!!!!!!!!!!!!!!!!!!!!)
+		createTopIcon(); //
 
 		// add
 		p_container.add(pages[0]);
-		p_container.add(pages[1]);
-		p_container.add(pages[2]);
-		p_container.add(pages[3]);
-		p_container.add(pages[4]);
+//		p_container.add(pages[1]);
+//		p_container.add(pages[2]);
+//		p_container.add(pages[3]);
+//		p_container.add(pages[4]);
 		add(p_menu, BorderLayout.NORTH);
 		add(p_container);
 

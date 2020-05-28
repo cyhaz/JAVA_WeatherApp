@@ -17,13 +17,19 @@ public class TopIcon extends JLabel {
 		icon=new ImageIcon(image);
 		setIcon(icon);
 		
-		setPreferredSize(new Dimension(60, 35));
+		setPreferredSize(new Dimension(60, 40));
 		addMouseListener(new MouseAdapter() {
 			public void mouseEntered(MouseEvent e) {
-//				setBackground(Color.yellow);
+				ImageIcon icon=new ImageIcon(path);
+				Image image=icon.getImage().getScaledInstance(45, 40, Image.SCALE_SMOOTH);
+				icon=new ImageIcon(image);
+				setIcon(icon);
 			}
 			public void mouseExited(MouseEvent e) {
-//				setBackground(null);
+				ImageIcon icon=new ImageIcon(path);
+				Image image=icon.getImage().getScaledInstance(40, 35, Image.SCALE_SMOOTH);
+				icon=new ImageIcon(image);
+				setIcon(icon);
 			}
 		});
 	}

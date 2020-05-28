@@ -18,7 +18,7 @@ import org.json.simple.parser.ParseException;
 public class Weather {
 	// 오늘 날짜 설정
 	String baseDate=new SimpleDateFormat("yyyyMMdd").format(new Date());
-	String baseTime="0500";		// 변경 가능
+	String baseTime="0800";		// 변경 가능
 	
 	ArrayList<String[]> list;
 	
@@ -71,12 +71,13 @@ public class Weather {
 		urlBuilder.append("&" + URLEncoder.encode("ny", "UTF-8") + "=" + URLEncoder.encode(Integer.toString(ny), "UTF-8")); /* 예보지점 Y 좌표 */
 
 		URL url=new URL(urlBuilder.toString());		// 위의 총합결과 url
-//		System.out.println(url);
+		System.out.println(url);
 		
 		HttpURLConnection conn=(HttpURLConnection)url.openConnection();
 		conn.setRequestMethod("GET");
 		conn.setRequestProperty("Content-type", "application/json");
 		int code=conn.getResponseCode();					// 200
+		System.out.println(code);
 		
 		BufferedReader rd;
 		if(code>=200 && code<=300) rd=new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -117,9 +118,9 @@ public class Weather {
 		return list;
 	}
 
-//	public static void main(String[] args) {
-//		Weather seoul=new Weather(60, 127);
-//		Value weather=seoul.select("20200527", "1500");
-//		System.out.println(weather.getT3h()+"℃");
-//	}
+	public static void main(String[] args) {
+		Weather seoul=new Weather(60, 127);
+		Value weather=seoul.select("20200529", "1500");
+		System.out.println(weather.getT3h()+"℃");
+	}
 }
