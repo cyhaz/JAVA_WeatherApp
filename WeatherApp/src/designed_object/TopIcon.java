@@ -31,6 +31,7 @@ public class TopIcon extends JLabel {
 				icon=new ImageIcon(image);
 				setIcon(icon);
 			}
+
 		});
 	}
 }

@@ -1,6 +1,5 @@
 package designed_object;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
@@ -9,18 +8,18 @@ import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+import main.MainDrive;
+
 /* 이미지 라벨 생성 객체 */
 public class ImageLabel extends JLabel {
 	int width;
 	int height;
 	String path;
-	ImageIcon icon;
-	Image image;
-	String thisPath;
+	String selectPath;
 	
 	public ImageLabel(String path, int width, int height) {
 		this.path=path;
-		this.thisPath=path;
+		this.selectPath=path;
 		this.width=width;
 		this.height=height;
 		
@@ -29,7 +28,6 @@ public class ImageLabel extends JLabel {
 	} 
 	
 	public void setImage(String path) {
-		this.path=path;
 		setIconImage(path);
 	}
 	
@@ -46,27 +44,32 @@ public class ImageLabel extends JLabel {
 		});
 	}
 	
-	public void connListenerClicked(String selectPath) {
+	// 오늘의 날씨, 기분 클릭 시 선택 및 weatherType, feelType값 변경
+	public void clickWeather(String selectPath) {
 		addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				ImageLabel.this.removeAll();
-				ImageLabel.this.setIcon(null);
-				
-				if(thisPath.equals(path)) {
+				if(ImageLabel.this.selectPath.equals(path)) {
 					setIconImage(selectPath);
-					thisPath=selectPath;
-				} else {
+					ImageLabel.this.selectPath=selectPath;					
+				} else if(ImageLabel.this.selectPath.equals(selectPath)){
 					setIconImage(path);
-					thisPath=path;
+					ImageLabel.this.selectPath=path;
 				}
-				ImageLabel.this.updateUI();
+			}
+		});
+	}
+	
+	public void shortCuts(int pageNum) {
+		addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {	
+				MainDrive.showSelectedPage(pageNum);
 			}
 		});
 	}
 	
 	public void setIconImage(String path) {
-		icon=new ImageIcon(path);
-		image=icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+		ImageIcon icon=new ImageIcon(path);
+		Image image=icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
 		icon=new ImageIcon(image);
 		setIcon(icon);
 	}

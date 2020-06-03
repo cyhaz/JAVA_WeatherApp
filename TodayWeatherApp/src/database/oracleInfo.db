@@ -1,0 +1,4 @@
+# 오라클 정보
+oracle_url=jdbc:oracle:thin:@localhost:1521:XE
+oracle_user=c##java
+oracle_password=1234
