@@ -2,14 +2,24 @@ package data;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import lib.GetDate;
 import lib.GetMath;
@@ -17,6 +27,9 @@ import lib.GetMath;
 public class Api {
 	String serviceUrl = "http://apis.data.go.kr/1360000/VilageFcstInfoService/";
 	String serviceKey = "osaxVtVoyJX00Z9XB30%2BFesbOmRxdyLka5QzNgyDa3JvSGJde0GkbFcUQDiPqCEWnNgSvo8Gr1cAwiH2Nz8dVg%3D%3D";
+	
+	String d_serviceUrl="http://openapi.airkorea.or.kr/openapi/services/rest/ArpltnInforInqireSvc/getCtprvnMesureLIst";
+	String d_serviceKey="8kL6j5npaYfEumELz%2FZOSev5k7Q2fITc0%2BbY8lATUjNzDgxyjALsK9kDn0TBs%2BNK6IfviiDBlUgIxNrAB1YvyQ%3D%3D";
 	
 	String dataVersion; // dataVersion : getUltraSrtNcst (초단기실황) / getUltraSrtFcst (초단기예보) / getVilageFcst (동네예보) 중 택1
 	String baseDate;
@@ -28,6 +41,7 @@ public class Api {
 	public Value value; // 오늘 날씨
 	public Value v_2;	// 내일 날씨
 	public Value v_3; // 모레 날씨
+	public Dust dust; // 오늘의 지역별 미세먼지 농도
 
 	public Api(String dataVersion, String baseDate, String baseTime, int nx, int ny) throws Exception {
 		this.dataVersion=dataVersion;
@@ -192,4 +206,99 @@ public class Api {
 			jsonObjects.add(jsonObject);
 		}
 	}
+	
+	// 미세먼지 api load
+	public ArrayList<Integer> d_dataLoad() throws Exception {
+		StringBuilder urlBuilder = new StringBuilder(d_serviceUrl);
+		urlBuilder.append("?" + URLEncoder.encode("ServiceKey", "UTF-8") + "=" + d_serviceKey);
+		urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + URLEncoder.encode("10", "UTF-8"));
+		urlBuilder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode("1", "UTF-8"));
+		urlBuilder.append("&" + URLEncoder.encode("searchCondition", "UTF-8") + "=" + URLEncoder.encode("WEEK", "UTF-8"));
+		urlBuilder.append("&" + URLEncoder.encode("dataGubun", "UTF-8") + "=" + URLEncoder.encode("DAILY", "UTF-8"));
+		urlBuilder.append("&" + URLEncoder.encode("itemCode", "UTF-8") + "=" + URLEncoder.encode("PM10", "UTF-8"));
+		
+		URL url=new URL(urlBuilder.toString());
+		HttpURLConnection conn=(HttpURLConnection)url.openConnection();
+		conn.setRequestMethod("GET");
+		conn.setRequestProperty("Content-type", "application/json");
+
+		int responseCode=conn.getResponseCode();
+		BufferedReader rd;
+		if(responseCode>=200 && responseCode<=300) rd=new BufferedReader(new InputStreamReader(conn.getInputStream()));
+		else rd=new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+
+		StringBuilder resultBuilder=new StringBuilder();
+		String line;
+		while((line=rd.readLine())!=null) resultBuilder.append(line);
+		rd.close();
+		conn.disconnect();
+		
+		// xml document 생성
+		InputSource is = new InputSource(new StringReader(resultBuilder.toString()));
+		Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
+		XPath xpath = XPathFactory.newInstance().newXPath();
+
+		// NodeList 가져오기
+		dust=new Dust();
+		NodeList seoul = (NodeList) xpath.evaluate("/response/body/items/item/seoul", document, XPathConstants.NODESET);
+		dust.setSeoul(Integer.parseInt(seoul.item(0).getTextContent()));
+		NodeList busan = (NodeList) xpath.evaluate("/response/body/items/item/busan", document, XPathConstants.NODESET);
+		dust.setBusan(Integer.parseInt(busan.item(0).getTextContent()));
+		NodeList daegu = (NodeList) xpath.evaluate("/response/body/items/item/daegu", document, XPathConstants.NODESET);
+		dust.setDaegu(Integer.parseInt(daegu.item(0).getTextContent()));
+		NodeList incheon = (NodeList) xpath.evaluate("/response/body/items/item/incheon", document, XPathConstants.NODESET);
+		dust.setIncheon(Integer.parseInt(incheon.item(0).getTextContent()));
+		NodeList gwangju = (NodeList) xpath.evaluate("/response/body/items/item/gwangju", document, XPathConstants.NODESET);
+		dust.setGwangju(Integer.parseInt(gwangju.item(0).getTextContent()));
+		NodeList daejeon = (NodeList) xpath.evaluate("/response/body/items/item/daejeon", document, XPathConstants.NODESET);
+		dust.setDaejeon(Integer.parseInt(daejeon.item(0).getTextContent()));
+		NodeList ulsan = (NodeList) xpath.evaluate("/response/body/items/item/ulsan", document, XPathConstants.NODESET);
+		dust.setUlsan(Integer.parseInt(ulsan.item(0).getTextContent()));
+		NodeList gyeonggi = (NodeList) xpath.evaluate("/response/body/items/item/gyeonggi", document, XPathConstants.NODESET);
+		dust.setGyeonggi(Integer.parseInt(gyeonggi.item(0).getTextContent()));
+		NodeList gangwon = (NodeList) xpath.evaluate("/response/body/items/item/gangwon", document, XPathConstants.NODESET);
+		dust.setGangwon(Integer.parseInt(gangwon.item(0).getTextContent()));
+		NodeList chungbuk = (NodeList) xpath.evaluate("/response/body/items/item/chungbuk", document, XPathConstants.NODESET);
+		dust.setChungbuk(Integer.parseInt(chungbuk.item(0).getTextContent()));
+		NodeList chungnam = (NodeList) xpath.evaluate("/response/body/items/item/chungnam", document, XPathConstants.NODESET);
+		dust.setChungnam(Integer.parseInt(chungnam.item(0).getTextContent()));
+		NodeList jeonbuk = (NodeList) xpath.evaluate("/response/body/items/item/jeonbuk", document, XPathConstants.NODESET);
+		dust.setJeonbuk(Integer.parseInt(jeonbuk.item(0).getTextContent()));
+		NodeList jeonnam = (NodeList) xpath.evaluate("/response/body/items/item/jeonnam", document, XPathConstants.NODESET);
+		dust.setJeonnam(Integer.parseInt(jeonnam.item(0).getTextContent()));
+		NodeList gyeongbuk = (NodeList) xpath.evaluate("/response/body/items/item/gyeongbuk", document, XPathConstants.NODESET);
+		dust.setGyeongbuk(Integer.parseInt(gyeongbuk.item(0).getTextContent()));
+		NodeList gyeongnam = (NodeList) xpath.evaluate("/response/body/items/item/gyeongnam", document, XPathConstants.NODESET);
+		dust.setGyeongnam(Integer.parseInt(gyeongnam.item(0).getTextContent()));
+		NodeList jeju = (NodeList) xpath.evaluate("/response/body/items/item/jeju", document, XPathConstants.NODESET);
+		dust.setJeju(Integer.parseInt(jeju.item(0).getTextContent()));
+		NodeList sejong = (NodeList) xpath.evaluate("/response/body/items/item/sejong", document, XPathConstants.NODESET);
+		dust.setSejong(Integer.parseInt(sejong.item(0).getTextContent()));
+		
+		ArrayList<Integer> localValue = new ArrayList<Integer>();
+		localValue.add(dust.getGangwon());
+		localValue.add(dust.getGyeonggi());
+		localValue.add(dust.getGyeongnam());
+		localValue.add(dust.getGyeongbuk());
+		localValue.add(dust.getGwangju());
+		localValue.add(dust.getDaegu());
+		localValue.add(dust.getDaejeon());
+		localValue.add(dust.getBusan());
+		localValue.add(dust.getSeoul());
+		localValue.add(dust.getSejong());
+		localValue.add(dust.getUlsan());
+		localValue.add(dust.getIncheon());
+		localValue.add(dust.getJeonnam());
+		localValue.add(dust.getJeonbuk());
+		localValue.add(dust.getJeju());
+		localValue.add(dust.getChungnam());
+		localValue.add(dust.getChungbuk());
+		
+		return localValue;
+	}
+	
+//	public static void main(String[] args) throws Exception {
+//		Api api=new Api("getUltraSrtNcst", "20200605", "0500", 60, 127);
+//		System.out.println(api.d_dataLoad());
+//	}
 }

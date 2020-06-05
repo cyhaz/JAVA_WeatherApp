@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.sql.Connection;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -16,6 +17,8 @@ import objects.TopIconLabel;
 import pages.Page;
 import pages.Page_Diary;
 import pages.Page_Home;
+import pages.Page_Recommend;
+import pages.Page_Todo;
 import pages.Page_User;
 
 public class MainDrive extends JFrame {
@@ -27,7 +30,10 @@ public class MainDrive extends JFrame {
 	String[] topIconPath = { "instagram.png", "list.png", "home.png", "user.png", "shop.png" };
 
 	public ConManager conManager = ConManager.getInstance(); // 메인 커넥션 메니저
+	public Connection con=conManager.getConnection();
 	public static boolean loginFlag = false; // 로그인 플래그
+	public static int member_no;
+	public static String member_id;
 
 	// 메인 디자인
 	JPanel p_menu; // 상단 메뉴 패널
@@ -42,11 +48,11 @@ public class MainDrive extends JFrame {
 		p_container = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
 
 		// p_container에 붙여질 패널들
-		pages[0] = new Page_Diary(this, "날씨 갤러리", FilePath.bgDir + "bg3.jpg", true);
-		pages[1] = new Page_User(this, "To do list", FilePath.bgDir + "bg2.jpg", false);
-		pages[2] = new Page_Home(this, "홈", FilePath.bgDir + "bg1.jpg", false);
+		pages[0] = new Page_Diary(this, "날씨 갤러리", FilePath.bgDir + "bg3.jpg", false);
+		pages[1] = new Page_Todo(this, "To do list", FilePath.bgDir + "bg2.jpg", false);
+		pages[2] = new Page_Home(this, "홈", FilePath.bgDir + "bg1.jpg", true);
 		pages[3] = new Page_User(this, "마이 페이지", FilePath.bgDir + "bg4.jpg", false);
-		pages[4] = new Page_User(this, "1:1 채팅", FilePath.bgDir + "bg5.jpg", false);
+		pages[4] = new Page_Recommend(this, "Today's Place", FilePath.bgDir + "bg5.jpg", false);
 
 		// style
 		p_menu.setBackground(new Color(146, 173, 77));
@@ -69,6 +75,7 @@ public class MainDrive extends JFrame {
 		setLocationRelativeTo(null);
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
+				conManager.closeDB(con);
 				System.exit(0);
 			}
 		});

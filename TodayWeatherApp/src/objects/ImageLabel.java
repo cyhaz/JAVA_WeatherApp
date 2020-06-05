@@ -1,5 +1,6 @@
 package objects;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
@@ -9,6 +10,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 import main.MainDrive;
+import pages.DiaryFrame;
 import pages.Page_Diary;
 
 public class ImageLabel extends JLabel {
@@ -34,6 +36,7 @@ public class ImageLabel extends JLabel {
 		addMouseListener(new MouseAdapter() {
 			public void mouseEntered(MouseEvent e) {
 				setImage(path_2, width, height);
+				ImageLabel.this.setCursor(new Cursor(Cursor.HAND_CURSOR));
 			}
 
 			public void mouseExited(MouseEvent e) {
@@ -74,6 +77,19 @@ public class ImageLabel extends JLabel {
 			public void mouseClicked(MouseEvent e) {
 				// 클릭 시 페이지 바로가기
 				MainDrive.showSelectedPage(pageNum);
+			}
+		});
+	}
+	
+	public void ifClickedNewDiaryFram(int num, String date, String time, String wt, String ft, String img, String content) {
+		addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				Thread thread=new Thread() {
+					public void run() {
+						new DiaryFrame(num, date, time, wt, ft, img, content);
+					}
+				};
+				thread.start();
 			}
 		});
 	}

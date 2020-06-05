@@ -40,7 +40,7 @@ public class Page_User extends Page {
 	public Page_User(MainDrive main, String title, String bgPath, boolean showFlag) {
 		super(main, title, bgPath, showFlag);
 		
-		con=main.conManager.getConnection();
+		con=main.con;
 		
 		p_loginContainer=new JPanel();
 		la_empty=new TextLabel("", 400, 200, 0);
@@ -48,7 +48,7 @@ public class Page_User extends Page {
 		t_id=new JTextField();
 		la_pw=new TextLabel("비밀번호 ", 120, 110, 20);
 		t_pw=new JPasswordField();
-		la_login=new ImageLabel(FilePath.buttonDir+"upload.png", 330, 50);
+		la_login=new ImageLabel(FilePath.buttonDir+"login.png", 330, 50);
 		
 		SetStyle.setPanelStyle(p_loginContainer, 300, 20, 400, 650);
 		t_id.setPreferredSize(new Dimension(200, 40));
@@ -63,6 +63,7 @@ public class Page_User extends Page {
 		
 		this.label.add(p_loginContainer);
 		
+		la_login.ifEnteredSetImage(FilePath.buttonDir+"login_select.png");
 		la_login.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				loginCheck();
@@ -85,10 +86,11 @@ public class Page_User extends Page {
 			
 			if(rs.next()) {
 				main.loginFlag=true;
-				String user_id=rs.getString(2);
+				main.member_no=rs.getInt(1);
+				main.member_id=rs.getString(2);
 				String user_name=rs.getString(4);
 				JOptionPane.showMessageDialog(this, "로그인 되었습니다.");
-				showMyInfo(user_id, user_name);
+				showMyInfo(user_name);
 			} else {
 				main.loginFlag=false;
 				JOptionPane.showMessageDialog(this, "로그인에 실패했습니다.\n아이디/비밀번호를 확인해주세요.");
@@ -101,16 +103,16 @@ public class Page_User extends Page {
 	}
 	
 	//  로그인 성공 시 마이페이지 띄우기
-	public void showMyInfo(String id, String name) {
+	public void showMyInfo(String name) {
 		p_loginContainer.removeAll();
 		p_loginContainer.setBackground(Color.white);
 		
 		la_empty=new TextLabel("", 300, 100, 0);
 		la_hello=new TextLabel(name+"님, 반갑습니다!", 350, 100, 22);
-		la_weather=new ImageLabel(FilePath.buttonDir+"upload.png", 150, 150);
-		la_diary=new ImageLabel(FilePath.buttonDir+"upload.png", 150, 150);
-		la_todolist=new ImageLabel(FilePath.buttonDir+"upload.png", 150, 150);
-		la_store=new ImageLabel(FilePath.buttonDir+"upload.png", 150, 150);
+		la_weather=new ImageLabel(FilePath.buttonDir+"weather.png", 150, 150);
+		la_diary=new ImageLabel(FilePath.buttonDir+"diary.png", 150, 150);
+		la_todolist=new ImageLabel(FilePath.buttonDir+"todo.png", 150, 150);
+		la_store=new ImageLabel(FilePath.buttonDir+"recommend.png", 150, 150);
 		
 		p_loginContainer.add(la_empty);
 		p_loginContainer.add(la_hello);

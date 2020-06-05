@@ -2,8 +2,10 @@ package pages;
 
 import java.awt.Choice;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -42,6 +44,12 @@ public class Page_Home extends Page {
 	JLabel la_w2HLTemp; // 모레 최고 / 최저 기온
 
 	JPanel p_subBox; // 우측 하단 컨테이너 (미세먼지)
+	JLabel la_dustTitle; // "오늘의 미세먼지"
+	JLabel la_empty;
+	ImageLabel la_dustImg; // 미세먼지 이미지
+	JLabel la_dustData; // 미세먼지 수치 (50 ㎍/m³)
+	JLabel la_dustContent; // 수치별 추천 text
+	
 
 	String baseDate = GetDate.date_today;
 	String baseTime = GetDate.time_before1h;
@@ -50,12 +58,15 @@ public class Page_Home extends Page {
 
 	String[] location = { "강원도", "경기도", "경상남도", "경상북도", "광주광역시", "대구광역시", "대전광역시", "부산광역시", "서울특별시", "세종특별자치시", "울산광역시",
 			"인천광역시", "전라남도", "전라북도", "제주도", "충청남도", "충청북도" };
+	ArrayList<Integer> dustList;
 	int[][] nxny = { { 73, 134 }, { 60, 120 }, { 91, 77 }, { 89, 91 }, { 58, 74 }, { 89, 90 }, { 67, 100 }, { 98, 76 },
 			{ 60, 127 }, { 66, 103 }, { 102, 84 }, { 55, 124 }, { 51, 67 }, { 63, 89 }, { 52, 38 }, { 68, 100 },
 			{ 69, 107 } };
 	String iconDir = FilePath.weatherIconDir;
 	String[] iconNames = { "0-1.png", "0-3.png", "0-4.png", "1-1.png", "1-3.png", "1-4.png", "2-1.png", "2-3.png",
 			"2-4.png", "3-1.png", "3-3.png", "3-4.png", "4-1.png", "4-3.png", "4-4.png" };
+	String[] dustImages = { "good.png", "soso.png", "bad.png", "sobad.png" };
+	String[] dustContents = {"밖으로 외출해보는건 어떨까요?", "그럭저럭 좋은 날이에요", "공기가 탁하네요...", "마스크 꼭 착용하고 외출하세요!"};
 
 	Api UN_yesterday = null;
 	Api UN = null;
@@ -63,8 +74,12 @@ public class Page_Home extends Page {
 	Api VF = null;
 
 	int nx, ny;
-	int v1Icon, v2Icon, v3Icon;
+	int dustState;
+	String dustText;
+	int v1Icon, v2Icon, v3Icon, dIcon;
 	String compareToYesterday = null;
+	
+	Thread apiThread;
 
 	public Page_Home(MainDrive main, String title, String bgPath, boolean showFlag) {
 		super(main, title, bgPath, showFlag);
@@ -98,6 +113,11 @@ public class Page_Home extends Page {
 		la_w2Pop = new TextLabel("비 올 확률 " + VF.v_3.getPop() + "%", 240, 30, 15); // 비 올 확률 0%
 
 		p_subBox = new JPanel(); // 우측 하단 컨테이너 (미세 먼지)
+		la_dustTitle=new TextLabel("오늘의 미세먼지", 500, 70, 35, Font.BOLD, JLabel.LEFT);
+		la_empty=new  TextLabel("", 500, 25, 0);
+		la_dustImg=new ImageLabel(FilePath.dustIconDir+dustImages[dIcon], 70, 70);
+		la_dustData=new TextLabel(Integer.toString(dustState)+" ㎍/m³", 170, 50, 30);
+		la_dustContent=new TextLabel(dustText, 380, 50, 20);
 
 		// 3 main panel style
 		SetStyle.setPanelStyle(p_today, 20, 20, 400, 650);
@@ -134,6 +154,12 @@ public class Page_Home extends Page {
 		p_w_2.add(la_w2Pop);
 		p_weekly.add(p_w_1);
 		p_weekly.add(p_w_2);
+		
+		p_subBox.add(la_dustTitle);
+		p_subBox.add(la_empty);
+		p_subBox.add(la_dustImg);
+		p_subBox.add(la_dustData);
+		p_subBox.add(la_dustContent);
 
 		// 페이지 패널이 가진 라벨에 붙이기 (메인 컨테이너 3개)
 		this.label.add(p_today);
@@ -142,9 +168,14 @@ public class Page_Home extends Page {
 
 		ch_loc.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				getApi(e.getItem().toString());
-				setAnother();
-				resetLabel();
+				apiThread=new Thread() {
+					public void run() {
+						getApi(e.getItem().toString());
+						setAnother();
+						resetLabel();
+					}
+				};
+				apiThread.start();
 			}
 		});
 	}
@@ -164,6 +195,14 @@ public class Page_Home extends Page {
 					UN = new Api("getUltraSrtNcst", baseDate, baseTime, nx, ny);
 					UF = new Api("getUltraSrtFcst", baseDate, baseTime, nx, ny);
 					VF = new Api("getVilageFcst", baseDate, "0500", nx, ny);
+					dustList=UN.d_dataLoad();
+					dustState=dustList.get(i);
+					int num;
+					if(dustState<=30) num=0;
+					else if(dustState<=50) num=1;
+					else if(dustState<=100) num=2;
+					else num=3;
+					dustText=dustContents[num];
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
@@ -187,6 +226,10 @@ public class Page_Home extends Page {
 		la_w2Icon.setImage(iconDir + iconNames[v3Icon]);
 		la_w2HLTemp.setText(String.format("%d ℃ / %d ℃", VF.v_3.getTmx(), VF.v_3.getTmn()));
 		la_w2Pop.setText("비 올 확률 " + VF.v_3.getPop() + "%");
+		
+		la_dustImg.setImage(FilePath.dustIconDir+dustImages[dIcon]);
+		la_dustData.setText(Integer.toString(dustState)+" ㎍/m³");
+		la_dustContent.setText(dustText);
 
 		this.updateUI();
 	}
