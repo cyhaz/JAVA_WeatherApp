@@ -94,7 +94,7 @@ public class Page_Todo extends Page implements ActionListener {
 		table.getColumnModel().getColumn(1).setPreferredWidth(50);
 		table.getColumnModel().getColumn(2).setPreferredWidth(300);
 		table.getColumnModel().getColumn(3).setPreferredWidth(100);
-		scroll.setPreferredSize(new Dimension(700, 330));
+		scroll.setPreferredSize(new Dimension(700, 300));
 //		scroll.setBackground(Color.WHITE);
 
 		ch_today.setBackground(new Color(182, 219, 242));
@@ -342,7 +342,6 @@ public class Page_Todo extends Page implements ActionListener {
 		// 삭제할 자격이 생기면
 		int result = JOptionPane.showConfirmDialog(this, "삭제하시겠습니까?");
 		if (result == JOptionPane.OK_OPTION) {
-			System.out.println("삭제 수행");
 
 			String sql = "delete from todolist where todolist_no=" + todolist_no;
 
@@ -354,7 +353,7 @@ public class Page_Todo extends Page implements ActionListener {
 				success = pstmt.executeUpdate();
 				con.commit();
 				if (success == 0) {
-					JOptionPane.showMessageDialog(this, "삭제 실패");
+					JOptionPane.showMessageDialog(this, "삭제에 실패했습니다.\n다시 시도해주세요.");
 				} else {
 					JOptionPane.showMessageDialog(this, "삭제 성공");
 					load();

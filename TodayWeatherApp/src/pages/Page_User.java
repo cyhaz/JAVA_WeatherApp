@@ -23,6 +23,7 @@ import objects.TextLabel;
 public class Page_User extends Page {
 	JPanel p_loginContainer;
 	TextLabel la_empty;
+	TextLabel la_empty2;
 	TextLabel la_id;
 	JTextField t_id;
 	TextLabel la_pw;
@@ -34,6 +35,7 @@ public class Page_User extends Page {
 	ImageLabel la_diary;
 	ImageLabel la_todolist;
 	ImageLabel la_store;
+	ImageLabel la_logout;
 	
 	Connection con;
 
@@ -41,8 +43,13 @@ public class Page_User extends Page {
 		super(main, title, bgPath, showFlag);
 		
 		con=main.con;
-		
 		p_loginContainer=new JPanel();
+		setLogoutStatePanel();
+		this.label.add(p_loginContainer);
+	}
+	
+	// 로그아웃 상태의 패널 세팅
+	public void setLogoutStatePanel() {
 		la_empty=new TextLabel("", 400, 200, 0);
 		la_id=new TextLabel("아이디 ", 120, 50, 20);
 		t_id=new JTextField();
@@ -60,8 +67,6 @@ public class Page_User extends Page {
 		p_loginContainer.add(la_pw);
 		p_loginContainer.add(t_pw);
 		p_loginContainer.add(la_login);
-		
-		this.label.add(p_loginContainer);
 		
 		la_login.ifEnteredSetImage(FilePath.buttonDir+"login_select.png");
 		la_login.addMouseListener(new MouseAdapter() {
@@ -107,12 +112,21 @@ public class Page_User extends Page {
 		p_loginContainer.removeAll();
 		p_loginContainer.setBackground(Color.white);
 		
-		la_empty=new TextLabel("", 300, 100, 0);
+		la_empty=new TextLabel("", 300, 50, 0);
 		la_hello=new TextLabel(name+"님, 반갑습니다!", 350, 100, 22);
 		la_weather=new ImageLabel(FilePath.buttonDir+"weather.png", 150, 150);
 		la_diary=new ImageLabel(FilePath.buttonDir+"diary.png", 150, 150);
 		la_todolist=new ImageLabel(FilePath.buttonDir+"todo.png", 150, 150);
 		la_store=new ImageLabel(FilePath.buttonDir+"recommend.png", 150, 150);
+		la_empty2=new TextLabel("", 300, 30, 0);
+		la_logout=new ImageLabel(FilePath.buttonDir+"logout.png", 300, 50);
+		
+		la_logout.ifEnteredSetImage(FilePath.buttonDir+"logout_select.png");
+		la_logout.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				logout();
+			}
+		});
 		
 		p_loginContainer.add(la_empty);
 		p_loginContainer.add(la_hello);
@@ -120,6 +134,8 @@ public class Page_User extends Page {
 		p_loginContainer.add(la_diary);
 		p_loginContainer.add(la_todolist);
 		p_loginContainer.add(la_store);
+		p_loginContainer.add(la_empty2);
+		p_loginContainer.add(la_logout);
 		
 		p_loginContainer.updateUI();
 		
@@ -127,5 +143,16 @@ public class Page_User extends Page {
 		la_diary.ifClickedGoPage(0);
 		la_todolist.ifClickedGoPage(1);
 		la_store.ifClickedGoPage(4);
+	}
+	
+	public void logout() {
+		int result=JOptionPane.showConfirmDialog(this, "로그아웃하시겠습니까?");
+		if(result==JOptionPane.OK_OPTION) {
+			main.loginFlag=false;
+			p_loginContainer.removeAll();
+			setLogoutStatePanel();
+			updateUI();
+			JOptionPane.showMessageDialog(this, "로그아웃되었습니다.");
+		}
 	}
 }

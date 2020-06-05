@@ -259,6 +259,11 @@ public class Page_Diary extends Page {
 					JOptionPane.showMessageDialog(this, "등록되었습니다.");
 				else
 					JOptionPane.showMessageDialog(this, "등록에 실패했습니다.\n확인 후 다시 시도해주세요.");
+				
+				thumbIcon = new ImageIcon(FilePath.buttonDir+"thumb.png");
+				la_thumb.repaint();
+				area.setText("");
+				
 				setRightPanel();
 				getDiaryList();
 			} catch (SQLException e) {
