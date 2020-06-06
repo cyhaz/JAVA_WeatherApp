@@ -1,6 +1,5 @@
 package pages;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -110,7 +109,6 @@ public class Page_User extends Page {
 	//  로그인 성공 시 마이페이지 띄우기
 	public void showMyInfo(String name) {
 		p_loginContainer.removeAll();
-		p_loginContainer.setBackground(Color.white);
 		
 		la_empty=new TextLabel("", 300, 50, 0);
 		la_hello=new TextLabel(name+"님, 반갑습니다!", 350, 100, 22);
@@ -143,6 +141,8 @@ public class Page_User extends Page {
 		la_diary.ifClickedGoPage(0);
 		la_todolist.ifClickedGoPage(1);
 		la_store.ifClickedGoPage(4);
+		
+		updateUI();
 	}
 	
 	public void logout() {

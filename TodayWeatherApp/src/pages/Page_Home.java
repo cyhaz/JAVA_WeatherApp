@@ -203,6 +203,7 @@ public class Page_Home extends Page {
 					else if(dustState<=100) num=2;
 					else num=3;
 					dustText=dustContents[num];
+					dIcon=num;
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}

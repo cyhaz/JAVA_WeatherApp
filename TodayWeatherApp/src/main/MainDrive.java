@@ -110,6 +110,12 @@ public class MainDrive extends JFrame {
 		pages[index].setVisible(true);
 		pages[index].updateTitle();
 	}
+	
+	public void ifLogoutResetPages() {
+		if(!loginFlag) {
+			// 각 페이지 조회했던 데이터 리셋
+		}
+	}
 
 	public static void main(String[] args) {
 		new MainDrive();
