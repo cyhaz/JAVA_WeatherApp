@@ -49,8 +49,8 @@ public class MainDrive extends JFrame {
 
 		// p_container에 붙여질 패널들
 		pages[0] = new Page_Diary(this, "날씨 갤러리", FilePath.bgDir + "bg3.jpg", false);
-		pages[1] = new Page_Todo(this, "To do list", FilePath.bgDir + "bg2.jpg", false);
-		pages[2] = new Page_Home(this, "홈", FilePath.bgDir + "bg1.jpg", true);
+		pages[1] = new Page_Todo(this, "To do list", FilePath.bgDir + "bg2.jpg", true);
+		pages[2] = new Page_Home(this, "홈", FilePath.bgDir + "bg1.jpg", false);
 		pages[3] = new Page_User(this, "마이 페이지", FilePath.bgDir + "bg4.jpg", false);
 		pages[4] = new Page_Recommend(this, "Today's Place", FilePath.bgDir + "bg5.jpg", false);
 

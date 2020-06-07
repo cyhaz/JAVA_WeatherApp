@@ -94,19 +94,13 @@ public class Page_Todo extends Page implements ActionListener {
 		table.getColumnModel().getColumn(1).setPreferredWidth(50);
 		table.getColumnModel().getColumn(2).setPreferredWidth(300);
 		table.getColumnModel().getColumn(3).setPreferredWidth(100);
+		scroll.getViewport().setBackground(Color.WHITE);
 		scroll.setPreferredSize(new Dimension(700, 300));
-//		scroll.setBackground(Color.WHITE);
 
 		ch_today.setBackground(new Color(182, 219, 242));
 		ch_today.setSelected(true);
 		ch_tomorrow.setBackground(new Color(182, 219, 242));
 		ch_afterday.setBackground(new Color(182, 219, 242));
-
-//		if(ch_today.isSelected()) dueDate=GetDate.date_today;
-//		else if(ch_tomorrow.isSelected()) dueDate=GetDate.date_tomorrow;
-//		else if(ch_afterday.isSelected()) dueDate=GetDate.date_afterDay;
-
-//		load();
 
 		p_container.add(la_title);
 		p_container.add(ch_today);
@@ -274,9 +268,10 @@ public class Page_Todo extends Page implements ActionListener {
 			int result = pstmt.executeUpdate();
 			con.commit();
 			if (result == 0) {
-				JOptionPane.showMessageDialog(this, "등록실패");
+				JOptionPane.showMessageDialog(this, "등록에 실패했습니다.\n확인 후 다시 시도해주세요");
 			} else {
-				JOptionPane.showMessageDialog(this, "등록 성공");
+				JOptionPane.showMessageDialog(this, "등록되었습니다.");
+				t_write.setText("");
 				load();
 			}
 		} catch (SQLException e) {
@@ -286,6 +281,7 @@ public class Page_Todo extends Page implements ActionListener {
 				e1.printStackTrace();
 			}
 			e.printStackTrace();
+			JOptionPane.showMessageDialog(this, "30자 이내로 입력해주세요");
 		} finally {
 			main.conManager.closeDB(pstmt);
 		}
@@ -313,9 +309,9 @@ public class Page_Todo extends Page implements ActionListener {
 				success = pstmt.executeUpdate();
 				con.commit();
 				if (success == 0) {
-					JOptionPane.showMessageDialog(this, "수정 실패");
+					JOptionPane.showMessageDialog(this, "수정에 실패했습니다.\\n확인 후 다시 시도해주세요");
 				} else {
-					JOptionPane.showMessageDialog(this, "수정 성공");
+					JOptionPane.showMessageDialog(this, "수정되었습니다.");
 					load();
 				}
 			} catch (SQLException e) {
@@ -355,7 +351,7 @@ public class Page_Todo extends Page implements ActionListener {
 				if (success == 0) {
 					JOptionPane.showMessageDialog(this, "삭제에 실패했습니다.\n다시 시도해주세요.");
 				} else {
-					JOptionPane.showMessageDialog(this, "삭제 성공");
+					JOptionPane.showMessageDialog(this, "삭제되었습니다.");
 					load();
 				}
 			} catch (SQLException e) {
