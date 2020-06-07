@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 
 import main.MainDrive;
 import pages.DiaryFrame;
+import pages.Page;
 import pages.Page_Diary;
 
 public class ImageLabel extends JLabel {
@@ -32,20 +33,22 @@ public class ImageLabel extends JLabel {
 		setImage(path, width, height);
 	}
 
-	public void ifEnteredSetImage(String path_2) {
+	public void ifEnteredSetImage(String path_2, Page page) {
 		addMouseListener(new MouseAdapter() {
 			public void mouseEntered(MouseEvent e) {
 				setImage(path_2, width, height);
 				ImageLabel.this.setCursor(new Cursor(Cursor.HAND_CURSOR));
+				page.updateUI();
 			}
 
 			public void mouseExited(MouseEvent e) {
 				setImage(path, width, height);
+				page.updateUI();
 			}
 		});
 	}
 
-	public void ifClickedSetImage(String path_2, ImageLabel[] list) {
+	public void ifClickedSetImage(String path_2, ImageLabel[] list, Page page) {
 		addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				// 클릭 시 이미지 변경
@@ -68,6 +71,7 @@ public class ImageLabel extends JLabel {
 				} else {
 					Page_Diary.feelType=thisNum;
 				}
+				page.updateUI();
 			}
 		});
 	}

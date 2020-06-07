@@ -112,7 +112,7 @@ public class Page_Diary extends Page {
 		// style
 		SetStyle.setPanelStyle(p_left, 40, 20, 430, 655);
 		SetStyle.setPanelStyle(p_right, 530, 20, 430, 655);
-		p_right.setBackground(Color.white);
+//		p_right.setBackground(Color.white);
 		la_titleL.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.LIGHT_GRAY));
 		la_titleR.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.red));
 		la_thumb.setPreferredSize(new Dimension(120, 90));
@@ -146,14 +146,14 @@ public class Page_Diary extends Page {
 		this.label.add(p_left);
 		this.label.add(p_right);
 
-		la_upload.ifEnteredSetImage(FilePath.buttonDir + "upload_select.png");
-		bt_lookUp.ifEnteredSetImage(FilePath.buttonDir+"refresh_select.png");
+		la_upload.ifEnteredSetImage(FilePath.buttonDir + "upload_select.png", this);
+		bt_lookUp.ifEnteredSetImage(FilePath.buttonDir+"refresh_select.png", this);
 
 		for (int i = 0; i < la_weatherImages.length; i++) {
-			la_weatherImages[i].ifClickedSetImage(FilePath.selectIconDir + i + ".png", la_weatherImages);
+			la_weatherImages[i].ifClickedSetImage(FilePath.selectIconDir + i + ".png", la_weatherImages, this);
 		}
 		for (int i = 0; i < la_feelImages.length; i++) {
-			la_feelImages[i].ifClickedSetImage(FilePath.selectIconDir + i + ".png", la_feelImages);
+			la_feelImages[i].ifClickedSetImage(FilePath.selectIconDir + i + ".png", la_feelImages, this);
 		}
 
 		bt_choose.addActionListener(new ActionListener() {
@@ -239,20 +239,19 @@ public class Page_Diary extends Page {
 			String registDate = GetDate.text_todayDate;
 			String registTime = GetDate.text_nowTime;
 
-			String sql = "insert into diary(diary_no, member_no, member_id, regist_date, regist_time, weathertype, feeltype, image, content)";
-			sql += " values(seq_diary.nextval, ?, ?, ?, ?, ?, ?, ?, ?)";
+			String sql = "insert into diary(diary_no, member_no, regist_date, regist_time, weathertype, feeltype, image, content)";
+			sql += " values(seq_diary.nextval, ?, ?, ?, ?, ?, ?, ?)";
 
 			PreparedStatement pstmt = null;
 			try {
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1, main.member_no); // member_no
-				pstmt.setString(2, main.member_id); // member_id
-				pstmt.setString(3, registDate); // regist_date
-				pstmt.setString(4, registTime); // regist_time
-				pstmt.setInt(5, weatherType + 1); // weathertype
-				pstmt.setInt(6, feelType + 1); // feeltype
-				pstmt.setString(7, imageName); // image
-				pstmt.setString(8, diaryContent); // content
+				pstmt.setString(2, registDate); // regist_date
+				pstmt.setString(3, registTime); // regist_time
+				pstmt.setInt(4, weatherType + 1); // weathertype
+				pstmt.setInt(5, feelType + 1); // feeltype
+				pstmt.setString(6, imageName); // image
+				pstmt.setString(7, diaryContent); // content
 
 				int result = pstmt.executeUpdate();
 				if (result != 0)
@@ -276,7 +275,7 @@ public class Page_Diary extends Page {
 	}
 
 	public void getDiaryList() {
-		String sql = "select d.DIARY_NO , d.MEMBER_NO , d.MEMBER_ID , d.REGIST_DATE , d.REGIST_TIME , w.WEATHERTYPE as weathertype, f.FEELTYPE as feeltype, d.IMAGE , d.CONTENT";
+		String sql = "select d.DIARY_NO , d.MEMBER_NO , d.REGIST_DATE , d.REGIST_TIME , w.WEATHERTYPE as weathertype, f.FEELTYPE as feeltype, d.IMAGE , d.CONTENT";
 		sql+=" from diary d, weathertype w, feeltype f where member_no=" + main.member_no;
 		sql+=" and d.weathertype=w.weather_id and d.feeltype=f.feel_id order by diary_no desc";
 
@@ -291,7 +290,6 @@ public class Page_Diary extends Page {
 				Diary diary=new Diary();
 				diary.setDiary_no(rs.getInt("diary_no"));
 				diary.setMember_no(rs.getInt("member_no"));
-				diary.setMember_id(rs.getString("member_id"));
 				diary.setRegist_date(rs.getString("regist_date"));
 				diary.setRegist_time(rs.getString("regist_time"));
 				diary.setWeathertype(rs.getString("weathertype"));
@@ -311,7 +309,7 @@ public class Page_Diary extends Page {
 				card.ifClickedNewDiaryFram(num, date, time, wt, ft, path, diaryText);
 				p_right.add(card);
 			}
-			p_right.updateUI();
+			updateUI();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -328,5 +326,6 @@ public class Page_Diary extends Page {
 				p_right.remove(childList[i]);
 			}
 		}
+		updateUI();
 	}
 }

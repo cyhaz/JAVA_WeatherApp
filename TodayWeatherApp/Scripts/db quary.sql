@@ -8,7 +8,6 @@ create table member(
 CREATE TABLE diary(
 	diary_no NUMBER PRIMARY KEY
 	, member_no NUMBER
-	, member_id varchar(20)
 	, regist_date varchar(20)
 	, regist_time varchar(20)
 	, weathertype NUMBER
@@ -16,7 +15,6 @@ CREATE TABLE diary(
 	, image varchar(50)
 	, content varchar(500)
 	, FOREIGN key(member_no) REFERENCES member(member_no)
-	, FOREIGN key(member_id) REFERENCES member(member_id)
 	, FOREIGN key(weathertype) REFERENCES weathertype(weather_id)
 	, FOREIGN key(feeltype) REFERENCES weathertype(weather_id)
 );

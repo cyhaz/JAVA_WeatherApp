@@ -232,7 +232,7 @@ public class Page_Home extends Page {
 		la_dustData.setText(Integer.toString(dustState)+" ㎍/m³");
 		la_dustContent.setText(dustText);
 
-		this.updateUI();
+		updateUI();
 	}
 
 	// 날씨아이콘 세팅 및 compareToYesterday 세팅

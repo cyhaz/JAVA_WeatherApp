@@ -3,7 +3,6 @@ package data;
 public class Diary {
 	private int diary_no;
 	private int member_no;
-	private String member_id;
 	private String regist_date;
 	private String regist_time;
 	private String weathertype;
@@ -25,14 +24,6 @@ public class Diary {
 
 	public void setMember_no(int member_no) {
 		this.member_no = member_no;
-	}
-
-	public String getMember_id() {
-		return member_id;
-	}
-
-	public void setMember_id(String member_id) {
-		this.member_id = member_id;
 	}
 
 	public String getRegist_date() {
