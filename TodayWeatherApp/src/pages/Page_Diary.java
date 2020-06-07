@@ -98,6 +98,7 @@ public class Page_Diary extends Page {
 			}
 		};
 		area = new JTextArea(9, 23);
+		area.setLineWrap(true);
 		scroll = new JScrollPane(area);
 		la_empty2 = new TextLabel("", 400, 30, 0);
 		la_upload = new ImageLabel(FilePath.buttonDir + "upload.png", 380, 60);
@@ -167,7 +168,11 @@ public class Page_Diary extends Page {
 				Thread thread=new Thread() {
 					@Override
 					public void run() {
-						upLoad();
+						if (weatherType>4 || feelType>4 || imageName.equals("") || area.getText().equals("")) {
+							JOptionPane.showMessageDialog(Page_Diary.this, "선택하지 않은 항목이 있습니다.");
+						} else {
+							upLoad();							
+						}
 					}
 				};
 				thread.start();
@@ -176,14 +181,7 @@ public class Page_Diary extends Page {
 		bt_lookUp.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				Thread thread=new Thread() {
-					@Override
-					public void run() {
-						setRightPanel();
-						getDiaryList();
-					}
-				};
-				thread.start();
+				getDiaryList();
 			}
 		});
 	}
@@ -197,6 +195,10 @@ public class Page_Diary extends Page {
 				fis = new FileInputStream(file);
 				thumbIcon = new ImageIcon(file.getAbsolutePath());
 				la_thumb.repaint();
+				
+				long time = System.currentTimeMillis();
+				String ext = FilePath.getEXT(file.getAbsolutePath());
+				imageName = time + "." + ext;
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -206,9 +208,6 @@ public class Page_Diary extends Page {
 	public boolean copyImage() {
 		boolean result = false;
 		try {
-			long time = System.currentTimeMillis();
-			String ext = FilePath.getEXT(file.getAbsolutePath());
-			imageName = time + "." + ext;
 			fos = new FileOutputStream(FilePath.copyObjectDir + imageName);
 
 			byte[] buff = new byte[1024];
@@ -237,7 +236,7 @@ public class Page_Diary extends Page {
 		if (copyImage()) {
 			String diaryContent = area.getText();
 			String registDate = GetDate.text_todayDate;
-			String registTime = GetDate.text_nowTime;
+			String registTime = GetDate.text_nowTime();
 
 			String sql = "insert into diary(diary_no, member_no, regist_date, regist_time, weathertype, feeltype, image, content)";
 			sql += " values(seq_diary.nextval, ?, ?, ?, ?, ?, ?, ?)";
@@ -254,20 +253,18 @@ public class Page_Diary extends Page {
 				pstmt.setString(7, diaryContent); // content
 
 				int result = pstmt.executeUpdate();
-				if (result != 0)
-					JOptionPane.showMessageDialog(this, "등록되었습니다.");
-				else
-					JOptionPane.showMessageDialog(this, "등록에 실패했습니다.\n확인 후 다시 시도해주세요.");
-				
-				thumbIcon = new ImageIcon(FilePath.buttonDir+"thumb.png");
-				la_thumb.repaint();
-				area.setText("");
-				
-				setRightPanel();
-				getDiaryList();
+				if (result != 0) {
+					JOptionPane.showMessageDialog(this, "등록되었습니다.");					
+					area.setText("");
+					thumbIcon = new ImageIcon(FilePath.buttonDir+"thumb.png");
+					la_thumb.repaint();
+					getDiaryList();
+					imageName="";
+				} else {
+					JOptionPane.showMessageDialog(this, "등록에 실패했습니다.\n확인 후 다시 시도해주세요.");					
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
-				JOptionPane.showMessageDialog(this, "선택하지 않은 항목이 있습니다.\n확인 후 다시 시도해주세요.");
 			} finally {
 				main.conManager.closeDB(pstmt);
 			}
@@ -275,6 +272,8 @@ public class Page_Diary extends Page {
 	}
 
 	public void getDiaryList() {
+		setRightPanel();
+		
 		String sql = "select d.DIARY_NO , d.MEMBER_NO , d.REGIST_DATE , d.REGIST_TIME , w.WEATHERTYPE as weathertype, f.FEELTYPE as feeltype, d.IMAGE , d.CONTENT";
 		sql+=" from diary d, weathertype w, feeltype f where member_no=" + main.member_no;
 		sql+=" and d.weathertype=w.weather_id and d.feeltype=f.feel_id order by diary_no desc";
@@ -306,7 +305,7 @@ public class Page_Diary extends Page {
 				String diaryText=diary.getContent();
 				
 				ImageLabel card=new ImageLabel(FilePath.copyObjectDir+diary.getImage(), 130, 130);
-				card.ifClickedNewDiaryFram(num, date, time, wt, ft, path, diaryText);
+				card.ifClickedNewDiaryFram(Page_Diary.this, num, date, time, wt, ft, path, diaryText);
 				p_right.add(card);
 			}
 			updateUI();

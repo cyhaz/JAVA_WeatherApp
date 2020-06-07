@@ -48,23 +48,26 @@ public class MainDrive extends JFrame {
 		p_container = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
 
 		// p_container에 붙여질 패널들
-//		pages[0] = new Page_Diary(this, "날씨 갤러리", FilePath.bgDir + "bg3.jpg", false);
-//		pages[1] = new Page_Todo(this, "To do list", FilePath.bgDir + "bg2.jpg", false);
-//		pages[2] = new Page_Home(this, "홈", FilePath.bgDir + "bg1.jpg", false);
-		pages[3] = new Page_User(this, "마이 페이지", FilePath.bgDir + "bg4.jpg", true);
-//		pages[4] = new Page_Recommend(this, "Today's Place", FilePath.bgDir + "bg5.jpg", false);
-
+		pages[0] = new Page_Diary(this, "날씨 갤러리", FilePath.bgDir + "bg3.jpg", false);
+		Page_Diary diaryPage = (Page_Diary) pages[0];
+		pages[1] = new Page_Todo(this, "To do list", FilePath.bgDir + "bg2.jpg", false);
+		Page_Todo todoPage = (Page_Todo) pages[1];
+		pages[2] = new Page_Recommend(this, "홈", FilePath.bgDir + "bg1.jpg", false);
+		pages[4] = new Page_Recommend(this, "Today's Place", FilePath.bgDir + "bg5.jpg", false);
+		Page_Recommend recPage = (Page_Recommend) pages[4];
+		pages[3] = new Page_User(this, diaryPage, todoPage, recPage, "마이 페이지", FilePath.bgDir + "bg4.jpg", true);
+		
 		// style
 		p_menu.setBackground(new Color(12, 21, 74));
 		p_container.setPreferredSize(new Dimension(screen_width - 15, screen_height - 20));
 		createTopIcon();
 
 		// add
-//		p_container.add(pages[0]);
-//		p_container.add(pages[1]);
-//		p_container.add(pages[2]);
+		p_container.add(pages[0]);
+		p_container.add(pages[1]);
+		p_container.add(pages[2]);
 		p_container.add(pages[3]);
-//		p_container.add(pages[4]);
+		p_container.add(pages[4]);
 		add(p_menu, BorderLayout.NORTH);
 		add(p_container);
 

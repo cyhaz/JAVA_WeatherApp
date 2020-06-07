@@ -23,8 +23,10 @@ public class GetDate {
 	public static String day_afterDay = day(1);
 
 	public static String text_todayDate = new SimpleDateFormat("M월 d일").format(new Date());
-	public static String text_nowTime = new SimpleDateFormat("H시 m분").format(new Date());
-
+	public static String text_nowTime() {
+		 return new SimpleDateFormat("H시 m분").format(new Date());
+	}
+	
 	public static String yyyyMMdd(int num) {
 		cal = new GregorianCalendar();
 		cal.add(Calendar.DATE, num);

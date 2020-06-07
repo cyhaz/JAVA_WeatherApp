@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -35,10 +36,14 @@ public class DiaryFrame extends JFrame {
 
 	String weatherType = null;
 	String feelType = null;
+	String imagePath;
+	Page_Diary page_diary;
 
-	public DiaryFrame(int num, String date, String time, String weatherType, String feelType, String imagepath,
+	public DiaryFrame(Page_Diary page_diary, int num, String date, String time, String weatherType, String feelType, String imagepath,
 			String content) {
 		super("Diary");
+		this.page_diary=page_diary;
+		this.imagePath=imagepath;
 
 		p_image = new ImageLabel(FilePath.copyObjectDir + imagepath, width, 180);
 		p_contents = new JPanel();
@@ -56,6 +61,7 @@ public class DiaryFrame extends JFrame {
 		scroll.setBorder(BorderFactory.createEmptyBorder());
 		t_content.setFocusable(false);
 		t_content.setText(content);
+		t_content.setLineWrap(true);
 
 		add(p_image, BorderLayout.NORTH);
 		add(p_contents);
@@ -91,7 +97,9 @@ public class DiaryFrame extends JFrame {
 				JOptionPane.showMessageDialog(this, "삭제 실패\n다시 시도해주세요.");
 			else {
 				JOptionPane.showMessageDialog(this, "삭제되었습니다.");
+				new File(FilePath.copyObjectDir+imagePath).delete();
 				dispose();
+				page_diary.getDiaryList();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

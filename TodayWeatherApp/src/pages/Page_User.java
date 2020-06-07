@@ -3,18 +3,19 @@ package pages;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import lib.FilePath;
+import lib.GetDate;
 import lib.SetStyle;
 import main.MainDrive;
 import objects.ImageLabel;
@@ -48,11 +49,18 @@ public class Page_User extends Page {
 	ImageLabel la_logout;
 	
 	Connection con;
+	Page_Diary diaryPage;
+	Page_Todo todoPage;
+	Page_Recommend recPage;
 
-	public Page_User(MainDrive main, String title, String bgPath, boolean showFlag) {
+	public Page_User(MainDrive main, Page_Diary diaryPage, Page_Todo todoPage, Page_Recommend recPage, String title, String bgPath, boolean showFlag) {
 		super(main, title, bgPath, showFlag);
+
+		this.diaryPage=diaryPage;
+		this.todoPage=todoPage;
+		this.recPage=recPage;
+		this.con=main.con;
 		
-		con=main.con;
 		p_loginContainer=new JPanel();
 		setLogoutStatePanel();
 		this.label.add(p_loginContainer);
@@ -139,6 +147,8 @@ public class Page_User extends Page {
 				String user_name=rs.getString(4);
 				JOptionPane.showMessageDialog(this, "로그인 되었습니다.");
 				showMyInfo(user_name);
+				
+				pageReSet();
 			} else {
 				main.loginFlag=false;
 				JOptionPane.showMessageDialog(this, "로그인에 실패했습니다.\n아이디/비밀번호를 확인해주세요.");
@@ -199,11 +209,32 @@ public class Page_User extends Page {
 		int result=JOptionPane.showConfirmDialog(this, "로그아웃하시겠습니까?");
 		if(result==JOptionPane.OK_OPTION) {
 			main.loginFlag=false;
+			main.member_no=0;
 
 			setLogoutStatePanel();
 			updateUI();
 			JOptionPane.showMessageDialog(this, "로그아웃되었습니다.");
+			
+			pageReSet();
 		}
+	}
+	
+	public void pageReSet() {
+		for (int i = 0; i < diaryPage.la_weatherImages.length; i++) {
+			diaryPage.la_weatherImages[i].setImage(FilePath.oriIconDir + i + ".png");
+		}
+		for (int i = 0; i < diaryPage.la_feelImages.length; i++) {
+			diaryPage.la_feelImages[i].setImage(FilePath.oriIconDir + i + ".png");
+		}
+		
+		diaryPage.getDiaryList();
+		diaryPage.area.setText("");
+		diaryPage.thumbIcon = new ImageIcon(FilePath.buttonDir+"thumb.png");
+		diaryPage.la_thumb.repaint();
+		diaryPage.imageName="";
+		
+		todoPage.load();
+		todoPage.buttons[0].setSelected(true);
 	}
 	
 	public void signUp() {

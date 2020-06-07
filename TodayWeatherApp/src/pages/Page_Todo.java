@@ -55,6 +55,7 @@ public class Page_Todo extends Page implements ActionListener {
 	Connection con;
 
 	String dueDate = GetDate.date_today;
+	JRadioButton[] buttons=new JRadioButton[3];
 	int todolist_no;
 	int row;
 
@@ -134,7 +135,9 @@ public class Page_Todo extends Page implements ActionListener {
 	}
 
 	public void setDueDate() {
-		JRadioButton[] buttons = { ch_today, ch_tomorrow, ch_afterday };
+		buttons[0]=ch_today;
+		buttons[1]=ch_tomorrow;
+		buttons[2]=ch_afterday;
 		for (int i = 0; i < buttons.length; i++) {
 			buttons[i].addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {

@@ -85,12 +85,12 @@ public class ImageLabel extends JLabel {
 		});
 	}
 	
-	public void ifClickedNewDiaryFram(int num, String date, String time, String wt, String ft, String img, String content) {
+	public void ifClickedNewDiaryFram(Page_Diary page_diary, int num, String date, String time, String wt, String ft, String img, String content) {
 		addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				Thread thread=new Thread() {
 					public void run() {
-						new DiaryFrame(num, date, time, wt, ft, img, content);
+						new DiaryFrame(page_diary, num, date, time, wt, ft, img, content);
 					}
 				};
 				thread.start();
