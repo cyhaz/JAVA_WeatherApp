@@ -214,8 +214,6 @@ public class Page_User extends Page {
 			setLogoutStatePanel();
 			updateUI();
 			JOptionPane.showMessageDialog(this, "로그아웃되었습니다.");
-			
-			pageReSet();
 		}
 	}
 	

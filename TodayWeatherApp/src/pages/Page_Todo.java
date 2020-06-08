@@ -177,6 +177,7 @@ public class Page_Todo extends Page implements ActionListener {
 		sql.append(" where todolist.status_no=status.status_no");
 		sql.append(" and todolist.member_no=?");
 		sql.append(" and todolist.duedate=?");
+		sql.append(" order by todolist.todolist_no asc");
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {

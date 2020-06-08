@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import data.Api;
+import data.Value;
 import lib.FilePath;
 import lib.GetDate;
 import lib.SetStyle;
@@ -57,7 +58,7 @@ public class Page_Home extends Page {
 	String yesterdayBaseTime = GetDate.time_after1h;
 
 	String[] location = { "강원도", "경기도", "경상남도", "경상북도", "광주광역시", "대구광역시", "대전광역시", "부산광역시", "서울특별시", "세종특별자치시", "울산광역시",
-			"인천광역시", "전라남도", "전라북도", "제주도", "충청남도", "충청북도" };
+			"인천광역시", "전라남도", "전라북도", "제주특별자치도", "충청남도", "충청북도" };
 	ArrayList<Integer> dustList;
 	int[][] nxny = { { 73, 134 }, { 60, 120 }, { 91, 77 }, { 89, 91 }, { 58, 74 }, { 89, 90 }, { 67, 100 }, { 98, 76 },
 			{ 60, 127 }, { 66, 103 }, { 102, 84 }, { 55, 124 }, { 51, 67 }, { 63, 89 }, { 52, 38 }, { 68, 100 },
@@ -68,6 +69,9 @@ public class Page_Home extends Page {
 	String[] dustImages = { "good.png", "soso.png", "bad.png", "sobad.png" };
 	String[] dustContents = {"밖으로 외출해보는건 어떨까요?", "그럭저럭 좋은 날이에요", "공기가 탁하네요...", "마스크 꼭 착용하고 외출하세요!"};
 
+	String[] weatherCase = {"맑음", "더움", "습함", "비/소나기", "바람", "흐림/안개", "눈"};
+
+	
 	Api UN_yesterday = null;
 	Api UN = null;
 	Api UF = null;
@@ -80,11 +84,16 @@ public class Page_Home extends Page {
 	String compareToYesterday = null;
 	
 	Thread apiThread;
+	Page_Recommend recPage;
 
-	public Page_Home(MainDrive main, String title, String bgPath, boolean showFlag) {
+	public Page_Home(MainDrive main, Page_Recommend recPage, String title, String bgPath, boolean showFlag) {
 		super(main, title, bgPath, showFlag);
-
+		
+		this.recPage=recPage;
+		
 		getApi("서울특별시");
+		getWeatherName();
+		recPage.getPlaceList("맑음", "서울특별시");
 		setAnother();
 
 		// on memory
@@ -171,6 +180,8 @@ public class Page_Home extends Page {
 				apiThread=new Thread() {
 					public void run() {
 						getApi(e.getItem().toString());
+						getWeatherName();
+						recPage.getPlaceList(main.weatherName, e.getItem().toString());
 						setAnother();
 						resetLabel();
 					}
@@ -233,6 +244,29 @@ public class Page_Home extends Page {
 		la_dustContent.setText(dustText);
 
 		updateUI();
+	}
+	
+	public void getWeatherName() {
+		int num=0;
+		Value un=UN.value;
+		Value uf=UF.value;
+		Value vf=VF.value;
+		
+		if (uf.getPty()==0) {
+			if (un.getReh()>75) num=2; // 습함
+			else {
+				if (un.getWsd()>10) num=4; // 바람
+				else {
+					if(un.getT1h()>25) num=1; // 더움
+					else if (uf.getSky()!=1) num=5; // 흐림/안개
+					else num=0; // 맑음
+				}
+			}
+		} 
+		else if (uf.getPty()==3) num=6; // 눈
+		else num=3; // 비/소나기
+		
+		main.weatherName=weatherCase[num];
 	}
 
 	// 날씨아이콘 세팅 및 compareToYesterday 세팅

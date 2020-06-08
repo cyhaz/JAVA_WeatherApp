@@ -34,6 +34,7 @@ public class MainDrive extends JFrame {
 	public static boolean loginFlag = false; // 로그인 플래그
 	public static int member_no;
 	public static String member_id;
+	public static String weatherName;
 
 	// 메인 디자인
 	JPanel p_menu; // 상단 메뉴 패널
@@ -49,13 +50,10 @@ public class MainDrive extends JFrame {
 
 		// p_container에 붙여질 패널들
 		pages[0] = new Page_Diary(this, "날씨 갤러리", FilePath.bgDir + "bg3.jpg", false);
-		Page_Diary diaryPage = (Page_Diary) pages[0];
 		pages[1] = new Page_Todo(this, "To do list", FilePath.bgDir + "bg2.jpg", false);
-		Page_Todo todoPage = (Page_Todo) pages[1];
-		pages[2] = new Page_Recommend(this, "홈", FilePath.bgDir + "bg1.jpg", false);
 		pages[4] = new Page_Recommend(this, "Today's Place", FilePath.bgDir + "bg5.jpg", false);
-		Page_Recommend recPage = (Page_Recommend) pages[4];
-		pages[3] = new Page_User(this, diaryPage, todoPage, recPage, "마이 페이지", FilePath.bgDir + "bg4.jpg", true);
+		pages[2] = new Page_Home(this, (Page_Recommend) pages[4], "홈", FilePath.bgDir + "bg1.jpg", false);
+		pages[3] = new Page_User(this, (Page_Diary) pages[0], (Page_Todo) pages[1], (Page_Recommend) pages[4], "마이 페이지", FilePath.bgDir + "bg4.jpg", true);
 		
 		// style
 		p_menu.setBackground(new Color(12, 21, 74));
