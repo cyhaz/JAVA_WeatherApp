@@ -117,12 +117,24 @@ public class Page_User extends Page {
 		la_signup.ifEnteredSetImage(FilePath.buttonDir+"signup_select.png", this);
 		la_login.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				loginCheck();
+				Thread thread=new Thread() {
+					@Override
+					public void run() {
+						loginCheck();
+					}
+				};
+				thread.start();
 			}
 		});
 		la_signup.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				signUp();
+				Thread thread=new Thread() {
+					@Override
+					public void run() {
+						signUp();
+					}
+				};
+				thread.start();
 			}
 		});
 	}
@@ -146,9 +158,14 @@ public class Page_User extends Page {
 				main.member_id=rs.getString(2);
 				String user_name=rs.getString(4);
 				JOptionPane.showMessageDialog(this, "로그인 되었습니다.");
-				showMyInfo(user_name);
-				
-				pageReSet();
+				Thread thread=new Thread() {
+					@Override
+					public void run() {
+						showMyInfo(user_name);
+						pageReSet();
+					}
+				};
+				thread.start();
 			} else {
 				main.loginFlag=false;
 				JOptionPane.showMessageDialog(this, "로그인에 실패했습니다.\n아이디/비밀번호를 확인해주세요.");
@@ -211,9 +228,9 @@ public class Page_User extends Page {
 			main.loginFlag=false;
 			main.member_no=0;
 
+			JOptionPane.showMessageDialog(this, "로그아웃되었습니다.");
 			setLogoutStatePanel();
 			updateUI();
-			JOptionPane.showMessageDialog(this, "로그아웃되었습니다.");
 		}
 	}
 	

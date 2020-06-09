@@ -77,7 +77,7 @@ public class Page_Todo extends Page implements ActionListener {
 		table = new JTable(model);
 		scroll = new JScrollPane(table);
 
-		con = main.conManager.getConnection();
+		con = main.con;
 		checkGroup.add(ch_today);
 		checkGroup.add(ch_tomorrow);
 		checkGroup.add(ch_afterday);

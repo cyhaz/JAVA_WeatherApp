@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import lib.FilePath;
+import objects.ImageLabel;
 import objects.TopIconLabel;
 import pages.Page;
 import pages.Page_Diary;
@@ -43,7 +44,7 @@ public class MainDrive extends JFrame {
 
 	public MainDrive() {
 		super("오늘의 날씨 - 홈");
-
+		
 		// on memory
 		p_menu = new JPanel();
 		p_container = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
@@ -52,8 +53,8 @@ public class MainDrive extends JFrame {
 		pages[0] = new Page_Diary(this, "날씨 갤러리", FilePath.bgDir + "bg3.jpg", false);
 		pages[1] = new Page_Todo(this, "To do list", FilePath.bgDir + "bg2.jpg", false);
 		pages[4] = new Page_Recommend(this, "Today's Place", FilePath.bgDir + "bg5.jpg", false);
-		pages[2] = new Page_Home(this, (Page_Recommend) pages[4], "홈", FilePath.bgDir + "bg1.jpg", false);
-		pages[3] = new Page_User(this, (Page_Diary) pages[0], (Page_Todo) pages[1], (Page_Recommend) pages[4], "마이 페이지", FilePath.bgDir + "bg4.jpg", true);
+		pages[2] = new Page_Home(this, (Page_Recommend) pages[4], "홈", FilePath.bgDir + "bg1.jpg", true);
+		pages[3] = new Page_User(this, (Page_Diary) pages[0], (Page_Todo) pages[1], (Page_Recommend) pages[4], "마이 페이지", FilePath.bgDir + "bg4.jpg", false);
 		
 		// style
 		p_menu.setBackground(new Color(12, 21, 74));
@@ -68,7 +69,7 @@ public class MainDrive extends JFrame {
 		p_container.add(pages[4]);
 		add(p_menu, BorderLayout.NORTH);
 		add(p_container);
-
+		
 		// set window
 		pack();
 		setVisible(true);
@@ -110,12 +111,6 @@ public class MainDrive extends JFrame {
 		}
 		pages[index].setVisible(true);
 		pages[index].updateTitle();
-	}
-
-	public void ifLogoutResetPages() {
-		if (!loginFlag) {
-			// 각 페이지 조회했던 데이터 리셋
-		}
 	}
 
 	public static void main(String[] args) {

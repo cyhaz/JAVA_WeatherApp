@@ -19,6 +19,7 @@ import javax.swing.JTextArea;
 
 import lib.FilePath;
 import main.ConManager;
+import main.MainDrive;
 import objects.ImageLabel;
 import objects.TextLabel;
 
@@ -37,11 +38,15 @@ public class DiaryFrame extends JFrame {
 	String weatherType = null;
 	String feelType = null;
 	String imagePath;
+	MainDrive main;
 	Page_Diary page_diary;
+	Connection con;
 
-	public DiaryFrame(Page_Diary page_diary, int num, String date, String time, String weatherType, String feelType, String imagepath,
+	public DiaryFrame(MainDrive main, Page_Diary page_diary, int num, String date, String time, String weatherType, String feelType, String imagepath,
 			String content) {
 		super("Diary");
+		this.main=main;
+		this.con=main.con;
 		this.page_diary=page_diary;
 		this.imagePath=imagepath;
 
@@ -86,9 +91,15 @@ public class DiaryFrame extends JFrame {
 	}
 
 	public void delete(int diary_no) {
+		Thread thread=new Thread() {
+			@Override
+			public void run() {
+				page_diary.getDiaryList();
+			}
+		};
+		thread.start();
+		
 		String sql = "delete from diary where diary_no=" + diary_no;
-		ConManager conManager=ConManager.getInstance();
-		Connection con = conManager.getConnection();
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = con.prepareStatement(sql);
@@ -99,13 +110,11 @@ public class DiaryFrame extends JFrame {
 				JOptionPane.showMessageDialog(this, "삭제되었습니다.");
 				new File(FilePath.copyObjectDir+imagePath).delete();
 				dispose();
-				page_diary.getDiaryList();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			conManager.closeDB(pstmt);
-			conManager.closeDB(con);
+			main.conManager.closeDB(pstmt);
 		}
 	}
 }

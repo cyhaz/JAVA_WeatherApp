@@ -62,7 +62,6 @@ public class Page_Diary extends Page {
 	String iconPath = FilePath.oriIconDir;
 
 	Connection con;
-	Thread getDbThread;
 	FileInputStream fis;
 	FileOutputStream fos;
 	File file;
@@ -181,7 +180,13 @@ public class Page_Diary extends Page {
 		bt_lookUp.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				getDiaryList();
+				Thread thread=new Thread() {
+					@Override
+					public void run() {
+						getDiaryList();
+					}
+				};
+				thread.start();
 			}
 		});
 	}
@@ -232,41 +237,43 @@ public class Page_Diary extends Page {
 	}
 
 	public void upLoad() {
-		JOptionPane.showConfirmDialog(this, "등록하시겠습니까?");
-		if (copyImage()) {
-			String diaryContent = area.getText();
-			String registDate = GetDate.text_todayDate;
-			String registTime = GetDate.text_nowTime();
-
-			String sql = "insert into diary(diary_no, member_no, regist_date, regist_time, weathertype, feeltype, image, content)";
-			sql += " values(seq_diary.nextval, ?, ?, ?, ?, ?, ?, ?)";
-
-			PreparedStatement pstmt = null;
-			try {
-				pstmt = con.prepareStatement(sql);
-				pstmt.setInt(1, main.member_no); // member_no
-				pstmt.setString(2, registDate); // regist_date
-				pstmt.setString(3, registTime); // regist_time
-				pstmt.setInt(4, weatherType + 1); // weathertype
-				pstmt.setInt(5, feelType + 1); // feeltype
-				pstmt.setString(6, imageName); // image
-				pstmt.setString(7, diaryContent); // content
-
-				int result = pstmt.executeUpdate();
-				if (result != 0) {
-					JOptionPane.showMessageDialog(this, "등록되었습니다.");					
-					area.setText("");
-					thumbIcon = new ImageIcon(FilePath.buttonDir+"thumb.png");
-					la_thumb.repaint();
-					getDiaryList();
-					imageName="";
-				} else {
-					JOptionPane.showMessageDialog(this, "등록에 실패했습니다.\n확인 후 다시 시도해주세요.");					
+		int answer=JOptionPane.showConfirmDialog(this, "등록하시겠습니까?");
+		if(answer==JOptionPane.OK_OPTION) {
+			if (copyImage()) {
+				String diaryContent = area.getText();
+				String registDate = GetDate.text_todayDate;
+				String registTime = GetDate.text_nowTime();
+				
+				String sql = "insert into diary(diary_no, member_no, regist_date, regist_time, weathertype, feeltype, image, content)";
+				sql += " values(seq_diary.nextval, ?, ?, ?, ?, ?, ?, ?)";
+				
+				PreparedStatement pstmt = null;
+				try {
+					pstmt = con.prepareStatement(sql);
+					pstmt.setInt(1, main.member_no); // member_no
+					pstmt.setString(2, registDate); // regist_date
+					pstmt.setString(3, registTime); // regist_time
+					pstmt.setInt(4, weatherType + 1); // weathertype
+					pstmt.setInt(5, feelType + 1); // feeltype
+					pstmt.setString(6, imageName); // image
+					pstmt.setString(7, diaryContent); // content
+					
+					int result = pstmt.executeUpdate();
+					if (result != 0) {
+						JOptionPane.showMessageDialog(this, "등록되었습니다.");					
+						area.setText("");
+						thumbIcon = new ImageIcon(FilePath.buttonDir+"thumb.png");
+						la_thumb.repaint();
+						getDiaryList();
+						imageName="";
+					} else {
+						JOptionPane.showMessageDialog(this, "등록에 실패했습니다.\n확인 후 다시 시도해주세요.");					
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				} finally {
+					main.conManager.closeDB(pstmt);
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} finally {
-				main.conManager.closeDB(pstmt);
 			}
 		}
 	}
@@ -305,7 +312,7 @@ public class Page_Diary extends Page {
 				String diaryText=diary.getContent();
 				
 				ImageLabel card=new ImageLabel(FilePath.copyObjectDir+diary.getImage(), 130, 130);
-				card.ifClickedNewDiaryFram(Page_Diary.this, num, date, time, wt, ft, path, diaryText);
+				card.ifClickedNewDiaryFram(main, Page_Diary.this, num, date, time, wt, ft, path, diaryText);
 				p_right.add(card);
 			}
 			updateUI();

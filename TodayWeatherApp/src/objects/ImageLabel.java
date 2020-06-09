@@ -58,7 +58,7 @@ public class ImageLabel extends JLabel {
 						list[i].clickCount=2;
 					}
 					setImage(path_2);
-					clickCount=1;
+					clickCount=1; //??????
 				} else {
 					setImage(path);
 					clickCount=0;
@@ -85,12 +85,12 @@ public class ImageLabel extends JLabel {
 		});
 	}
 	
-	public void ifClickedNewDiaryFram(Page_Diary page_diary, int num, String date, String time, String wt, String ft, String img, String content) {
+	public void ifClickedNewDiaryFram(MainDrive main, Page_Diary page_diary, int num, String date, String time, String wt, String ft, String img, String content) {
 		addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				Thread thread=new Thread() {
 					public void run() {
-						new DiaryFrame(page_diary, num, date, time, wt, ft, img, content);
+						new DiaryFrame(main, page_diary, num, date, time, wt, ft, img, content);
 					}
 				};
 				thread.start();

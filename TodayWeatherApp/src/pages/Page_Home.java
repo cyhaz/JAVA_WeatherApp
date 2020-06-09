@@ -83,50 +83,44 @@ public class Page_Home extends Page {
 	int v1Icon, v2Icon, v3Icon, dIcon;
 	String compareToYesterday = null;
 	
-	Thread apiThread;
 	Page_Recommend recPage;
 
 	public Page_Home(MainDrive main, Page_Recommend recPage, String title, String bgPath, boolean showFlag) {
 		super(main, title, bgPath, showFlag);
 		
 		this.recPage=recPage;
-		
-		getApi("서울특별시");
-		getWeatherName();
-		recPage.getPlaceList("맑음", "서울특별시");
-		setAnother();
 
 		// on memory
 		p_today = new JPanel(); // 좌측 컨테이너
 		ch_loc = new Choice(); // 지역 선택
 		la_date = new TextLabel(GetDate.text_todayDate, 350, 50, 40); // 5월 24일
-		la_weatherText = new TextLabel(compareToYesterday, 200, 30, 15); // 어제보다 추워요
-		la_weatherIcon = new ImageLabel(iconDir + iconNames[v1Icon], 250, 250); // 현재 날씨에 해당하는 이미지 아이콘
-		la_mainTemp = new TextLabel(UN.value.getT1h() + " ℃", 350, 50, 30); // 현재 기온
-		la_highLowTemp = new TextLabel(String.format("%d ℃ / %d ℃", VF.value.getTmx(), VF.value.getTmn()), 350, 20, 15);
-		la_rainPer = new TextLabel("비 올 확률 " + VF.value.getPop() + "%", 350, 80, 20); // 비 올 확률 0%
-		la_reh = new TextLabel("습도 " + UN.value.getReh() + "%", 175, 20, 15); // 습도 0%
-		la_wsd = new TextLabel("풍속 " + UN.value.getWsd() + "m/s", 175, 20, 15); // 풍속 0m/s
+		la_weatherText = new TextLabel("", 200, 30, 15); // 어제보다 추워요
+		la_weatherIcon = new ImageLabel("", 250, 250); // 현재 날씨에 해당하는 이미지 아이콘
+		la_mainTemp = new TextLabel("0 ℃", 350, 50, 30); // 현재 기온
+		la_highLowTemp = new TextLabel("0 ℃ / 0 ℃", 350, 20, 15);
+		la_rainPer = new TextLabel("비 올 확률 0%", 350, 80, 20); // 비 올 확률 0%
+		la_reh = new TextLabel("습도 0%", 175, 20, 15); // 습도 0%
+		la_wsd = new TextLabel("풍속 0m/s", 175, 20, 15); // 풍속 0m/s
 
 		p_weekly = new JPanel(null); // 우측 상단 컨테이너 (주간 날씨)
 		p_w_1 = new JPanel(); // 내일 날씨 패널
 		la_w1Day = new TextLabel(GetDate.day_tomorrow, 240, 60, 23); // 내일 요일
-		la_w1Icon = new ImageLabel(iconDir + iconNames[v2Icon], 110, 110); // 내일 날씨 아이콘
-		la_w1HLTemp = new TextLabel(String.format("%d ℃ / %d ℃", VF.v_2.getTmx(), VF.v_2.getTmn()), 240, 30, 20);
-		la_w1Pop = new TextLabel("비 올 확률 " + VF.v_2.getPop() + "%", 240, 30, 15); // 비 올 확률 0%
+		la_w1Icon = new ImageLabel("", 110, 110); // 내일 날씨 아이콘
+		la_w1HLTemp = new TextLabel("0 ℃ / 0 ℃", 240, 30, 20);
+		la_w1Pop = new TextLabel("비 올 확률 0%", 240, 30, 15); // 비 올 확률 0%
 
 		p_w_2 = new JPanel(); // 모레 날씨 패널
 		la_w2Day = new TextLabel(GetDate.day_afterDay, 240, 60, 23); // 모레 요일
-		la_w2Icon = new ImageLabel(iconDir + iconNames[v3Icon], 110, 110); // 모레 날씨 아이콘
-		la_w2HLTemp = new TextLabel(String.format("%d ℃ / %d ℃", VF.v_3.getTmx(), VF.v_3.getTmn()), 240, 30, 20);
-		la_w2Pop = new TextLabel("비 올 확률 " + VF.v_3.getPop() + "%", 240, 30, 15); // 비 올 확률 0%
+		la_w2Icon = new ImageLabel("", 110, 110); // 모레 날씨 아이콘
+		la_w2HLTemp = new TextLabel("0 ℃ / 0 ℃", 240, 30, 20);
+		la_w2Pop = new TextLabel("비 올 확률 0%", 240, 30, 15); // 비 올 확률 0%
 
 		p_subBox = new JPanel(); // 우측 하단 컨테이너 (미세 먼지)
 		la_dustTitle=new TextLabel("오늘의 미세먼지", 500, 70, 35, Font.BOLD, JLabel.LEFT);
 		la_empty=new  TextLabel("", 500, 25, 0);
-		la_dustImg=new ImageLabel(FilePath.dustIconDir+dustImages[dIcon], 70, 70);
-		la_dustData=new TextLabel(Integer.toString(dustState)+" ㎍/m³", 170, 50, 30);
-		la_dustContent=new TextLabel(dustText, 380, 50, 20);
+		la_dustImg=new ImageLabel("", 70, 70);
+		la_dustData=new TextLabel("0 ㎍/m³", 170, 50, 30);
+		la_dustContent=new TextLabel("", 380, 50, 20);
 
 		// 3 main panel style
 		SetStyle.setPanelStyle(p_today, 20, 20, 400, 650);
@@ -171,13 +165,39 @@ public class Page_Home extends Page {
 		p_subBox.add(la_dustContent);
 
 		// 페이지 패널이 가진 라벨에 붙이기 (메인 컨테이너 3개)
-		this.label.add(p_today);
-		this.label.add(p_weekly);
-		this.label.add(p_subBox);
+		Page_Home.this.label.add(p_today);
+		Page_Home.this.label.add(p_weekly);
+		Page_Home.this.label.add(p_subBox);
+		
+
+		Thread thread2=new Thread() {
+			public void run() {
+				ImageLabel loadingBg = new ImageLabel(FilePath.buttonDir+"loading.jpg", main.screen_width, main.screen_height);
+				loadingBg.setBounds(0, 0, main.screen_width, main.screen_height);
+				Page_Home.this.label.add(loadingBg);
+				p_today.setVisible(false);
+				p_weekly.setVisible(false);
+				p_subBox.setVisible(false);
+				
+				getApi("서울특별시");
+				getWeatherName();
+				recPage.getPlaceList("맑음", "서울특별시");
+				setAnother();
+				resetLabel();
+				
+				Page_Home.this.label.remove(loadingBg);
+				p_today.setVisible(true);
+				p_weekly.setVisible(true);
+				p_subBox.setVisible(true);
+				
+				updateUI();
+			}
+		};
+		thread2.start();
 
 		ch_loc.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				apiThread=new Thread() {
+				Thread thread=new Thread() {
 					public void run() {
 						getApi(e.getItem().toString());
 						getWeatherName();
@@ -186,9 +206,11 @@ public class Page_Home extends Page {
 						resetLabel();
 					}
 				};
-				apiThread.start();
+				thread.start();
 			}
 		});
+		updateUI();
+
 	}
 
 	// api 불러오기
