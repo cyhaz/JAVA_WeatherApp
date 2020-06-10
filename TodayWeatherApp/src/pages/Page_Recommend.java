@@ -89,6 +89,7 @@ public class Page_Recommend extends Page {
 			}
 		}
 		updateUI();
+		widthPlus=20;
 	}
 	
 	public JPanel createPanel(String imgPath, String name, String address, String phone) {
