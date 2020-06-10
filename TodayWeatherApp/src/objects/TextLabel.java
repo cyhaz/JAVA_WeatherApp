@@ -2,8 +2,14 @@ package objects;
 
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JLabel;
+
+import lib.FilePath;
 
 public class TextLabel extends JLabel {
 
@@ -11,7 +17,7 @@ public class TextLabel extends JLabel {
 		super(text);
 
 		setPreferredSize(new Dimension(width, height));
-		setFont(new Font("ÇÑÄÄ À±°íµñ 230", fontStyle, fontSize));
+		setFont(setFont(fontSize));
 		setHorizontalAlignment(position);
 	}
 
@@ -20,7 +26,29 @@ public class TextLabel extends JLabel {
 		super(text);
 
 		setPreferredSize(new Dimension(width, height));
-		setFont(new Font("ÇÑÄÄ À±°íµñ 230", Font.BOLD, fontSize));
+		setFont(setFont(fontSize));
 		setHorizontalAlignment(JLabel.CENTER);
+	}
+
+	public Font setFont(int fontSize) {
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		int fontIndex = 0;
+
+		try {
+			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(FilePath.resDir + "/HANYGO230.TTF")));
+
+			for (int i = 0; i < ge.getAvailableFontFamilyNames().length; i++) {
+				if (ge.getAvailableFontFamilyNames()[i].equals("ÇÑÄÄ À±°íµñ 230")) {
+					fontIndex = i;
+					break;
+				}
+			}
+
+		} catch (FontFormatException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return new Font(ge.getAvailableFontFamilyNames()[fontIndex], Font.BOLD, fontSize);
 	}
 }
