@@ -56,15 +56,14 @@ public class ImageLabel extends JLabel {
 					for(int i=0;i<list.length;i++) {
 						list[i].setImage(list[i].path);
 						list[i].clickCount=2;
+						if(ImageLabel.this.equals(list[i]))  thisNum=i;
 					}
 					setImage(path_2);
-					clickCount=1; //??????
+					clickCount=1;
 				} else {
 					setImage(path);
 					clickCount=0;
-				}
-				for(int i=0;i<list.length;i++) {
-					if(ImageLabel.this.equals(list[i]))  thisNum=i;
+					thisNum=50;
 				}
 				if(list.equals(Page_Diary.la_weatherImages)) {
 					Page_Diary.weatherType=thisNum;

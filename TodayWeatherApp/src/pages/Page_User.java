@@ -1,6 +1,8 @@
 package pages;
 
 import java.awt.Dimension;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
@@ -15,7 +17,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import lib.FilePath;
-import lib.GetDate;
 import lib.SetStyle;
 import main.MainDrive;
 import objects.ImageLabel;
@@ -135,6 +136,32 @@ public class Page_User extends Page {
 					}
 				};
 				thread.start();
+			}
+		});
+		t_pw.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				if(e.getKeyCode()==KeyEvent.VK_ENTER) {
+					Thread thread=new Thread() {
+						@Override
+						public void run() {
+							loginCheck();
+						}
+					};
+					thread.start();
+				}
+			}
+		});
+		t_signupPw.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				if(e.getKeyCode()==KeyEvent.VK_ENTER) {
+					Thread thread=new Thread() {
+						@Override
+						public void run() {
+							signUp();
+						}
+					};
+					thread.start();
+				}
 			}
 		});
 	}

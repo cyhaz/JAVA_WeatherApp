@@ -1,0 +1,4 @@
+# 오라클 정보
+oracle_url=jdbc:oracle:thin:@192.168.0.26:1521:XE
+oracle_user=c##android
+oracle_password=1234

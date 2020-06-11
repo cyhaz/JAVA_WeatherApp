@@ -181,7 +181,7 @@ public class Page_Home extends Page {
 				
 				getApi("서울특별시");
 				getWeatherName();
-				recPage.getPlaceList("맑음", "서울특별시");
+				recPage.getPlaceList(main.weatherName, "서울특별시");
 				setAnother();
 				resetLabel();
 				

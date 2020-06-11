@@ -97,6 +97,7 @@ public class MainDrive extends JFrame {
 		if (!loginFlag) {
 			if (index == 0 || index == 1 || index == 4) {
 				JOptionPane.showMessageDialog(pages[0], "로그인 후 이용가능합니다.");
+				setVisiblePages(3);
 			} else {
 				setVisiblePages(index);
 			}
