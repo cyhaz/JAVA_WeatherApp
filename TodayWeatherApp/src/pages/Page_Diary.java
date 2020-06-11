@@ -264,6 +264,14 @@ public class Page_Diary extends Page {
 						area.setText("");
 						thumbIcon = new ImageIcon(FilePath.buttonDir+"thumb.png");
 						la_thumb.repaint();
+
+						for (int i = 0; i < la_weatherImages.length; i++) {
+							la_weatherImages[i].setImage(FilePath.oriIconDir + i + ".png");
+						}
+						for (int i = 0; i < la_feelImages.length; i++) {
+							la_feelImages[i].setImage(FilePath.oriIconDir + i + ".png");
+						}
+						updateUI();
 						getDiaryList();
 						imageName="";
 					} else {

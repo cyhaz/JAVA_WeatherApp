@@ -296,9 +296,4 @@ public class Api {
 		
 		return localValue;
 	}
-	
-//	public static void main(String[] args) throws Exception {
-//		Api api=new Api("getUltraSrtNcst", "20200605", "0500", 60, 127);
-//		System.out.println(api.d_dataLoad());
-//	}
 }

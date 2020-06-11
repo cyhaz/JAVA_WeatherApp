@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
 public class TodoListModel  extends AbstractTableModel{
+	
 	public ArrayList<TodoList> list = new ArrayList<TodoList>();
 	String[] column = {"NO","상태","내용", "마감 기한"};
 	

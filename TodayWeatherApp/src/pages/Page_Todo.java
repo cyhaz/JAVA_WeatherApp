@@ -264,6 +264,7 @@ public class Page_Todo extends Page implements ActionListener {
 
 			if (t_write.getText().equals("")) {
 				JOptionPane.showMessageDialog(this, "내용을 입력해주세요");
+				return;
 			} else {
 				pstmt.setString(3, t_write.getText());
 			}
